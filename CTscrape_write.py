@@ -25,9 +25,11 @@ def dataget(url):
 	except requests.exceptions.ConnectTimeout:
 		print "dataget() error!"
 
+	# get website content
 	soup = BeautifulSoup(r2.content, "html.parser")
+	
+	# extract student data from html
 	name = soup.find("span", {"class": "profile-name"})
-
 	clubs = soup.find("div", {"class": "club-list"})
 	club_name = clubs.find_all("span",  {"class": "original-copy hidden"})
 	clubs_list = clubs.find_all("p",  {"class": "truncate-on-the-fly hyphenate"})
@@ -37,6 +39,8 @@ def dataget(url):
 	# use regex to determine whether contacts found include phone numbers or emails (priority given to phone)
 	# then write formated contact info to appropriate file
 	for item in data:
+
+		# student data contains a phone number
 		if contains_digits(item.text) and item.text.find('@')==-1:
 		
 			# write to phone file
@@ -70,9 +74,11 @@ def dataget(url):
 			p.write("\n")
 			p.write("\n")
 			break
+		
+		# student data contains a phone number
 		elif item.text.find('@')!=-1:
+			
 			# write to emails file
-
 			global e_count
 			e_count = e_count + 1
 			e.write(str(e_count))
@@ -108,8 +114,8 @@ def dataget(url):
 # crawl student pages to get raw student data
 def crawler():
 	start_page = 1
-	while (start_page < 19):
-	# while (start_page < 305):
+	last_page = 305
+	while (start_page < last_page):
 		print "Page:", start_page
 		people_url = "https://openlab.citytech.cuny.edu/people/?school=school_all&department=dept_all&usertype=student&group_sequence=newest&upage=" + str(start_page)
 		try:
@@ -131,4 +137,4 @@ def crawler():
 crawler()
 e.close()
 p.close()
-print "done!"
+print "finished"
