@@ -1,12 +1,9 @@
-# got to p 272.. connection error
 import requests
 from bs4 import BeautifulSoup
 import re
 import os.path
-# from __future__ import print_function
 
 path = "C:/cygwin64/home/Ge"
-
 email_complete_name = os.path.join(path, "CTemails_0" + ".txt")         
 phone_complete_name = os.path.join(path, "CTphone_numbers_0" + ".txt")         
 
@@ -29,7 +26,6 @@ def dataget(url):
 		print "dataget() error!"
 
 	soup = BeautifulSoup(r2.content, "html.parser")
-
 	name = soup.find("span", {"class": "profile-name"})
 
 	clubs = soup.find("div", {"class": "club-list"})
@@ -38,10 +34,12 @@ def dataget(url):
 
 	data = soup.find_all("div", {"class": "col-sm-17"})
 
+	# use regex to determine whether contacts found include phone numbers or emails (priority given to phone)
+	# then write formated contact info to appropriate file
 	for item in data:
 		if contains_digits(item.text) and item.text.find('@')==-1:
-			# write to phone
-
+		
+			# write to phone file
 			global p_count 
 			p_count = p_count + 1
 			p.write(str(p_count))
@@ -73,7 +71,7 @@ def dataget(url):
 			p.write("\n")
 			break
 		elif item.text.find('@')!=-1:
-			# write to emails
+			# write to emails file
 
 			global e_count
 			e_count = e_count + 1
@@ -107,7 +105,7 @@ def dataget(url):
 			break
 
 
-
+# crawl student pages to get raw student data
 def crawler():
 	start_page = 1
 	while (start_page < 19):
@@ -122,7 +120,6 @@ def crawler():
 		people_soup = BeautifulSoup(r1.content, "html.parser")
 
 		people_list = people_soup.find_all("h2", {"class": "item-title"})
-		# print people_list
 
 		for person in people_list:
 			person_url = person.a.get("href")
@@ -135,10 +132,3 @@ crawler()
 e.close()
 p.close()
 print "done!"
-
-
-# reference
-# global vars http://stackoverflow.com/questions/423379/using-global-variables-in-a-function-other-than-the-one-that-created-them
-
-
-
